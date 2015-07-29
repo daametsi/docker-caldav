@@ -5,7 +5,7 @@
 container_name=caldavd
 
 # relative path to volume
-volume=opt2  # avoid conflict with /opt/rh/
+volume=opt2/CalendarServer/data  # avoid confusion with /opt/..
 
 usage()
 {
@@ -82,7 +82,7 @@ if [ -z "$PERIOD" ]; then
 fi
 
 
-if $sudo docker ps -a |grep -q 'pyff_batch\s*$'; then
+if $sudo docker ps -a |grep -q "${container_name}"; then
     ${sudo} docker rm ${container_name}  # needed for batch mode
 fi
 
@@ -94,10 +94,6 @@ fi
 exec=$(cat << EOF
 ${sudo} docker run --rm=true \
     ${detachmode} \
-    --env="LOGFILE=$LOGFILE" \
-    --env="LOGLEVEL=$LOGLEVEL" \
-    --env="PERIOD=$PERIOD" \
-    --env="PIPELINE=$PIPELINE" \
     --hostname="${container_name}" \
     --name="${container_name}" \
     --volume=${dir}/${volume}:/${volume} \
